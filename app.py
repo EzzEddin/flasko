@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for
+from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
@@ -32,6 +32,9 @@ def internal_server_error(e):
 def index():
     form = ArticleForm()
     if form.validate_on_submit():
+        old_title = session.get('title')
+        if old_title is not None and old_title == form.title.data:
+            flash("Looks like you wrote an article with the same title!")
         session['title'] = form.title.data
         session['content'] = form.content.data
         return redirect(url_for('index'))
