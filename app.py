@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
@@ -32,7 +32,7 @@ def internal_server_error(e):
 def index():
     form = ArticleForm()
     if form.validate_on_submit():
-        form.title.data = ''
-        form.content.data = ''
-
+        session['title'] = form.title.data
+        session['content'] = form.content.data
+        return redirect(url_for('index'))
     return render_template('index.html', form=form)
