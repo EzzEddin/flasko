@@ -32,6 +32,11 @@ class ArticleForm(FlaskForm):
     submit = SubmitField('Post')
 
 
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db, Article=Article)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
