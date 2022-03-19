@@ -1,15 +1,29 @@
+import os
 from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'mysql+pymysql://root:' + os.getenv('MYSQL_PASSWORD') + '@localhost:3306/flaskapp'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
+
+
+class Article(db.Model):
+    __tablename__ = 'articles'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64), unique=True, index=True, nullable=False)
+    content = db.Column(db.VARCHAR, index=True, nullable=False)
+    published = db.Column(db.Boolean, default=False)
 
 
 class ArticleForm(FlaskForm):
